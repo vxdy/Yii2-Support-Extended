@@ -1,8 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "baseBranches": [
-    "main"
-  ],
+  "baseBranches": [ "main" ],
   "extends": [
     "config:base",
     
@@ -19,7 +17,7 @@
     ":label(dependencies)",
     ":maintainLockFilesWeekly",
     ":prHourlyLimit4",
-    ":prNotPending"
+    ":prNotPending",
     ":preserveSemverRanges",
     ":respectLatest",
     ":reviewer(Christian-Seiler)",
