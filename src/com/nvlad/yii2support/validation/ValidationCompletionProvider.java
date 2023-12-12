@@ -179,7 +179,6 @@ public class ValidationCompletionProvider extends CompletionProvider<CompletionP
             return RulePositionEnum.UNKNOWN;
         }
 
-        //TODO: Поискать решение без костылей типа "Element(Array value)", как выяснилось может сломаться
         if (validationParameter.getNode().toString().equals("Element(Array value)") && validationParameter.getParent() instanceof ArrayCreationExpression) {
             int index = PsiUtil.getValueIndexInArray(validationParameter, (ArrayCreationExpression) validationParameter.getParent());
             if (index == 0)

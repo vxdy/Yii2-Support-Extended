@@ -52,6 +52,9 @@ intellij {
     type.set(properties("platformType"))
 
     plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+
+
+
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file
 }
 

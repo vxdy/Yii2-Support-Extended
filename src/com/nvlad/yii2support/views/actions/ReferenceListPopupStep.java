@@ -62,7 +62,7 @@ class ReferenceListPopupStep extends BaseListPopupStep<PsiReference> {
 
     @Override
     public Icon getIconFor(PsiReference reference) {
-        return PhpIcons.METHOD_ICON;
+        return PhpIcons.METHOD;
     }
 
 
