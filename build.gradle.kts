@@ -5,26 +5,12 @@ import org.jetbrains.changelog.markdownToHTML
 plugins {
     id("java")
 //    id("org.jetbrains.kotlin.jvm") version "1.4.10"
-    id("org.jetbrains.intellij") version "0.7.2"
+    id("org.jetbrains.intellij") version "1.10.1"
     id("org.jetbrains.changelog") version "1.1.2"
     id("io.gitlab.arturbosch.detekt") version "1.14.2"
 }
 
-// Import variables from gradle.properties file
-// `pluginName_` variable ends with `_` because of the collision with Kotlin magic getter in the `intellij` closure.
-// Read more about the issue: https://github.com/JetBrains/intellij-platform-plugin-template/issues/29
-val pluginName_: String by project
-val pluginVersion: String by project
-val pluginSinceBuild: String by project
-val pluginVerifierIdeVersions: String by project
-
-val platformType: String by project
-val platformVersion: String by project
-val platformDownloadSources: String by project
-
-group = "com.nvlad"
-version = pluginVersion
-
+fun properties(key: String) = project.findProperty(key).toString()
 
 val platformPluginsAssociation = hashMapOf<String, String>()
 platformPluginsAssociation["2019.1.4"] = "com.jetbrains.php:191.8026.56, org.jetbrains.plugins.phpstorm-remote-interpreter:191.5849.22, com.jetbrains.twig:191.6183.95"
@@ -37,7 +23,7 @@ platformPluginsAssociation["2022.3.2"] = "com.jetbrains.php:223.8617.59, org.jet
 val bundledPlugins = "DatabaseTools, webDeployment, terminal, java-i18n, properties"
 
 val platformPlugins = buildString {
-    append(platformPluginsAssociation[platformVersion])
+    append(platformPluginsAssociation["2022.3.2"])
     append(", $bundledPlugins")
 }
 
@@ -58,14 +44,15 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
 }
 
+var pluginarray = "com.jetbrains.php:223.8617.59, org.jetbrains.plugins.phpstorm-remote-interpreter:223.7571.117, com.jetbrains.twig:223.8617.59, PsiViewer:2022.3, DatabaseTools, webDeployment, terminal, java-i18n, properties"
+
 intellij {
-    pluginName = pluginName_
-    version = platformVersion
-    type = platformType
-    downloadSources = platformDownloadSources.toBoolean()
-    updateSinceUntilBuild = true
-    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    setPlugins(*platformPlugins.split(',').map(String::trim).filter(String::isNotEmpty).toTypedArray())
+    pluginName.set(properties("pluginName"))
+    version.set(properties("platformVersion"))
+    type.set(properties("platformType"))
+
+    plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file
 }
 
 sourceSets {
@@ -97,23 +84,10 @@ tasks {
     }
 
     patchPluginXml {
-        version(pluginVersion)
-        sinceBuild(pluginSinceBuild)
-        untilBuild(null)
-
-        // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
-        pluginDescription(
-            closure {
-                File(projectDir,"./DESCRIPTION.md").readText().lines().joinToString("\n").run { markdownToHTML(this) }
-            }
-        )
-
-        // Get the latest available change notes from the changelog file
-//        changeNotes(
-//                closure {
-//                    changelog.getLatest().toHTML()
-//                }
-//        )
+        version.set(properties("pluginVersion"))
+        sinceBuild.set(properties("pluginSinceBuild"))
+        untilBuild.set(properties("pluginUntilBuild"))
+        //changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""))
     }
 
     test {
@@ -123,16 +97,12 @@ tasks {
         }
     }
 
-    runPluginVerifier {
-        ideVersions(pluginVerifierIdeVersions)
-    }
 
     publishPlugin {
         dependsOn("patchChangelog")
-        token(System.getenv("PUBLISH_TOKEN"))
         // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
-        channels(pluginVersion.split('-').getOrElse(1) { "default" }.split('.').first())
+        channels.set(listOf(properties("pluginVersion").split('-').getOrElse(1) { "default" }.split('.').first()))
     }
 }

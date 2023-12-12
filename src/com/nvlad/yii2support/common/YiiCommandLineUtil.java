@@ -11,7 +11,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathMappingSettings;
 import com.jetbrains.php.config.commandLine.PhpCommandSettings;
 import com.jetbrains.php.config.commandLine.PhpCommandSettingsBuilder;
-import com.jetbrains.php.remote.interpreter.PhpRemoteSdkAdditionalData;
 import com.jetbrains.php.run.remote.PhpRemoteInterpreterManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +27,7 @@ public class YiiCommandLineUtil {
             "userName must not be null",
             "Auth cancel",
             "PHP home is not specified or invalid.",
+            PhpCommandSettingsBuilder.getInterpreterNotFoundError(),
     };
 
     public static GeneralCommandLine create(Project project, String command) throws ExecutionException {
@@ -61,30 +61,6 @@ public class YiiCommandLineUtil {
                 return null;
             }
 
-            PhpRemoteSdkAdditionalData additionalData = (PhpRemoteSdkAdditionalData) commandSettings.getAdditionalData();
-            if (additionalData == null) {
-                return null;
-            }
-
-            try {
-                Method getRemoteProcessHandler = getMethod(interpreterManager);
-                if (is2016) {
-                    return (ProcessHandler) getRemoteProcessHandler
-                            .invoke(interpreterManager, project, "Unknown string", additionalData, commandLine);
-                } else {
-                    PathMappingSettings.PathMapping[] pathMappings = new PathMappingSettings.PathMapping[0];
-                    if (getRemoteProcessHandler.getParameterCount() == 5) {
-                        return (ProcessHandler) getRemoteProcessHandler
-                                .invoke(interpreterManager, project, additionalData, commandLine, true, pathMappings);
-
-                    }
-
-                    return (ProcessHandler) getRemoteProcessHandler
-                            .invoke(interpreterManager, project, additionalData, commandLine, pathMappings);
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                processError(e);
-            }
 
             return null;
         }

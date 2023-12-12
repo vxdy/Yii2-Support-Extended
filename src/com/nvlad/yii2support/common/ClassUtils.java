@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,7 +49,7 @@ public class ClassUtils {
 
     @Nullable
     public static PhpClass getPhpClassUniversal(Project project, PhpPsiElement value) {
-        if (value instanceof MethodReference && (Objects.equals(value.getName(), "className") || Objects.equals(value.getName(), "tableName"))) {
+        if (value instanceof MethodReference && (value.getName().equals("className") || value.getName().equals("tableName"))) {
             MethodReference methodRef = (MethodReference) value;
 
             return getPhpClass(methodRef.getClassReference());

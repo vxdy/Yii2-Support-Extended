@@ -163,8 +163,8 @@ public class DatabaseUtils {
         if (field instanceof DasColumn) {
             DasColumn column = (DasColumn) field;
             builder = builder.withTypeText(column.getDataType().typeName, true);
-            if (column.getDbParent() != null && showSchema && column.getDbParent().getDbParent() != null) {
-                builder = builder.withTailText(" (" + column.getDbParent().getDbParent().getName() + "." + RemoveTablePrefix(column.getDbParent().getName(), project) + ")", true);
+            if (column.getDasParent() != null && showSchema && column.getDasParent().getDasParent() != null) {
+                builder = builder.withTailText(" (" + column.getDasParent().getDasParent().getName() + "." + RemoveTablePrefix(column.getDasParent().getName(), project) + ")", true);
             }
             if (column instanceof DasColumn)
                 builder = builder.withIcon(TypePresentationService.getService().getIcon(field));
@@ -173,10 +173,10 @@ public class DatabaseUtils {
         }
         if (field instanceof DasTable) {
             DasTable table = (DasTable) field;
-            DasObject tableSchema = table.getDbParent();
+            DasObject tableSchema = table.getDasParent();
             if (tableSchema != null) {
                 if (tableSchema instanceof DbNamespaceImpl) {
-                    Object dataSource = tableSchema.getDbParent();
+                    Object dataSource = tableSchema.getDasParent();
                    // DbDataSourceImpl dataSource = (DbDataSourceImpl) ((DbNamespaceImpl) tableSchema).getDbParent();
                     if (dataSource instanceof DbDataSourceImpl) {
                         builder = builder.withTypeText(((DbDataSourceImpl)dataSource).getName(), true);
@@ -187,7 +187,7 @@ public class DatabaseUtils {
                 }
             }
             if (showSchema && tableSchema != null) {
-                builder = builder.withTailText(" (" + table.getDbParent().getName() + ")", true);
+                builder = builder.withTailText(" (" + table.getDasParent().getName() + ")", true);
             }
             if (table instanceof DasTable)
                 builder = builder.withIcon(TypePresentationService.getService().getIcon(table));

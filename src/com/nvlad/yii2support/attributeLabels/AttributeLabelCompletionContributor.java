@@ -13,6 +13,10 @@ public class AttributeLabelCompletionContributor extends com.intellij.codeInsigh
 
     @Override
     public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
-        return (typeChar == '\'' || typeChar == '"') && position.getParent() instanceof ArrayCreationExpression;
+        if ((typeChar == '\'' || typeChar == '"') && position.getParent() instanceof ArrayCreationExpression) {
+            return true;
+        }
+
+        return false;
     }
 }
