@@ -32,9 +32,15 @@ platformPluginsAssociation["2020.2.3"] = "com.jetbrains.php:202.7660.42, org.jet
 platformPluginsAssociation["2020.3.3"] = "com.jetbrains.php:203.7717.11, org.jetbrains.plugins.phpstorm-remote-interpreter:203.5981.155, com.jetbrains.twig:203.6682.75"
 platformPluginsAssociation["2021.1"] = "com.jetbrains.php:211.6693.120, org.jetbrains.plugins.phpstorm-remote-interpreter:211.6693.65, com.jetbrains.twig:211.6693.44, PsiViewer:211-SNAPSHOT"
 platformPluginsAssociation["2021.2"] = "com.jetbrains.php:212.4746.92, org.jetbrains.plugins.phpstorm-remote-interpreter:212.4746.52, com.jetbrains.twig:212.4746.57, PsiViewer:212-SNAPSHOT"
-val bundledPlugins = "DatabaseTools, webDeployment, CSS, terminal, coverage, java-i18n, remote-run, properties"
+//platformPluginsAssociation["2023.3"] = "com.jetbrains.php:233.11799.232, org.jetbrains.plugins.phpstorm-remote-interpreter:233.11799.172, com.jetbrains.twig:233.11799.244, PsiViewer:233.2"
+platformPluginsAssociation["2022.3.2"] = "com.jetbrains.php:223.8617.59, org.jetbrains.plugins.phpstorm-remote-interpreter:223.7571.117, com.jetbrains.twig:223.8617.59, PsiViewer:2022.3"
+val bundledPlugins = "DatabaseTools, webDeployment, terminal, java-i18n, properties"
 
-val platformPlugins = platformPluginsAssociation[platformVersion] + ", $bundledPlugins"
+val platformPlugins = buildString {
+    append(platformPluginsAssociation[platformVersion])
+    append(", $bundledPlugins")
+}
+
 
 repositories {
     mavenCentral()
@@ -45,8 +51,8 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.14.2")
 
     implementation("io.sentry:sentry:1.7.12") {
-        exclude("org.slf4j", "slf4j-api");
-        exclude("com.fasterxml.jackson.core", "jackson-core");
+        exclude("org.slf4j", "slf4j-api")
+        exclude("com.fasterxml.jackson.core", "jackson-core")
     }
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
@@ -58,7 +64,6 @@ intellij {
     type = platformType
     downloadSources = platformDownloadSources.toBoolean()
     updateSinceUntilBuild = true
-
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     setPlugins(*platformPlugins.split(',').map(String::trim).filter(String::isNotEmpty).toTypedArray())
 }

@@ -1,5 +1,6 @@
 package com.nvlad.yii2support.views.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -62,7 +63,7 @@ class ReferenceListPopupStep extends BaseListPopupStep<PsiReference> {
 
     @Override
     public Icon getIconFor(PsiReference reference) {
-        return PhpIcons.METHOD_ICON;
+        return  AllIcons.Nodes.Method;
     }
 
 

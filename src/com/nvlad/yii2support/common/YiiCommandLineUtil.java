@@ -28,7 +28,6 @@ public class YiiCommandLineUtil {
             "userName must not be null",
             "Auth cancel",
             "PHP home is not specified or invalid.",
-            PhpCommandSettingsBuilder.INTERPRETER_NOT_FOUND_ERROR,
     };
 
     public static GeneralCommandLine create(Project project, String command) throws ExecutionException {
