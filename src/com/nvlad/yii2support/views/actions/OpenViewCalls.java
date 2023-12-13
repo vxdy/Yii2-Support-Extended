@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
@@ -24,7 +23,6 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.nvlad.yii2support.common.FileUtil;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +49,7 @@ public class OpenViewCalls extends AnAction {
             return;
         }
 
-        BaseListPopupStep popupStep = new ReferenceListPopupStep("Render this View from", references);
+        BaseListPopupStep<PsiReference> popupStep = new ReferenceListPopupStep("Render this View from", references);
         ListPopup popup = new ListPopupImpl(popupStep) {
             @Override
             protected ListCellRenderer getListElementRenderer() {

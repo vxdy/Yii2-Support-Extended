@@ -78,6 +78,7 @@ public class ViewFileIndex extends FileBasedIndexExtension<String, ViewInfo> {
         @Override
         @NotNull
         public Map<String, ViewInfo> map(@NotNull final FileContent inputData) {
+
             final Project project = inputData.getProject();
 
             ViewResolve resolve = ViewUtil.resolveView(inputData.getFile(), project);
@@ -86,7 +87,6 @@ public class ViewFileIndex extends FileBasedIndexExtension<String, ViewInfo> {
             }
 
             final String absolutePath = inputData.getFile().getPath();
-            //System.out.println("ViewDataIndexer.map > " + absolutePath + " => " + resolve.key);
 
             Map<String, ViewInfo> map = new HashMap<>();
             ViewInfo viewInfo = new ViewInfo(inputData);

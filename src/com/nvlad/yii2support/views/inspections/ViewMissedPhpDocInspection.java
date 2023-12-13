@@ -23,12 +23,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ViewMissedPhpDocInspection extends PhpInspection {
+    public ViewMissedPhpDocInspection() {
+        super();
+        System.out.println("test");
+    }
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder problemsHolder, boolean b) {
+
         return new PhpElementVisitor() {
             @Override
             public void visitPhpFile(PhpFile PhpFile) {
+                System.out.println("test");
                 Project project = PhpFile.getProject();
                 ViewResolve resolve = ViewUtil.resolveView(PhpFile.getVirtualFile(), project);
                 if (resolve == null) {

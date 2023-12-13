@@ -3,7 +3,6 @@ package com.nvlad.yii2support.common;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.nvlad.yii2support.utils.Yii2SupportSettings;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +48,8 @@ public class YiiAlias {
             return null;
         }
 
-        myResolvedAliasCache.put(alias, StringUtils.stripStart(path, "/"));
+        //myResolvedAliasCache.put(alias, StringUtils.stripStart(path, "/"));
+        myResolvedAliasCache.put(alias, path.replaceFirst("^/+", ""));
 
         return myResolvedAliasCache.get(alias);
     }

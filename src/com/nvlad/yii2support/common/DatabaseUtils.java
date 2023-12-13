@@ -162,7 +162,7 @@ public class DatabaseUtils {
         }
         if (field instanceof DasColumn) {
             DasColumn column = (DasColumn) field;
-            builder = builder.withTypeText(column.getDataType().typeName, true);
+            builder = builder.withTypeText(column.getDasType().toDataType().typeName, true);
             if (column.getDasParent() != null && showSchema && column.getDasParent().getDasParent() != null) {
                 builder = builder.withTailText(" (" + column.getDasParent().getDasParent().getName() + "." + RemoveTablePrefix(column.getDasParent().getName(), project) + ")", true);
             }
@@ -384,8 +384,8 @@ public class DatabaseUtils {
                         }
                         if (!found) {
                             VirtualProperty newItem = new VirtualProperty(column.getName(),
-                                    column.getDataType().typeName,
-                                    column.getDataType().toString(),
+                                    column.getDasType().toDataType().typeName,
+                                    column.getDasType().toDataType().typeName,
                                     column.getComment(),
                                      null);
                             result.add(newItem);

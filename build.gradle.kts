@@ -5,7 +5,7 @@ import org.jetbrains.changelog.markdownToHTML
 plugins {
     id("java")
 //    id("org.jetbrains.kotlin.jvm") version "1.4.10"
-    id("org.jetbrains.intellij") version "1.10.1"
+    id("org.jetbrains.intellij") version "1.16.1"
     id("org.jetbrains.changelog") version "1.1.2"
     id("io.gitlab.arturbosch.detekt") version "1.14.2"
 }
@@ -96,7 +96,7 @@ tasks {
     test {
         //useJUnitPlatform()
         reports {
-            junitXml.isEnabled = true
+            //junitXml.isEnabled = true
         }
     }
 
