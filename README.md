@@ -1,3 +1,5 @@
+Notes: This fork works for the current PHPStorm Version, although some Features are not working.
+
 IntelliJ IDEA / PhpStorm Yii2 Support
 =====================================
 
