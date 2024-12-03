@@ -1,34 +1,14 @@
 Notes: This fork works for the current PHPStorm Version, although some Features are not working.
 
-IntelliJ IDEA / PhpStorm Yii2 Support
+IntelliJ IDEA / PhpStorm Yii2 Support for PHPStorm 2023 &  PHPStorm 2024 
 =====================================
 
-[![Latest Stable Version](http://phpstorm.espend.de/badge/9388/version)](https://plugins.jetbrains.com/plugin/9388)
-[![Total Downloads](http://phpstorm.espend.de/badge/9388/downloads)](https://plugins.jetbrains.com/plugin/9388)
-[![Downloads Last Month](http://phpstorm.espend.de/badge/9388/last-month)](https://plugins.jetbrains.com/plugin/9388)
-
-<p align="center">
-    <a href="https://plugins.jetbrains.com/idea/plugin/9388-yii2-support" target="_blank">
-        <img src="img/logo.png?raw=true" width="518" alt="IntelliJ IDEA / PhpStorm Yii2 Support" />
-    </a>
-</p>
-
-
-Provides [Yii 2 Framework](http://www.yiiframework.com/) support for [PhpStorm](https://www.jetbrains.com/phpstorm/)
-and [IntelliJ IDEA](https://www.jetbrains.com/idea/).  
-
-Donate
-------
-
-Please make donations to support plugin development.  
-[![paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MVG9CP6NZV856) [![yandex.money](https://img.shields.io/badge/Donate-Yandex.Money-yellow.svg)](https://money.yandex.ru/to/41001209655503)  
-Bitcoin: 36TYn22Ch48FsBriJkGmD52Ge8Dqf7Gjkb  
-
+Fork of https://github.com/nvlad/yii2support
 
 Features
 --------
 
-### Views
+### Views  (Currently not Working)
 - View template names and parameters completion
 - Add view parameters after completion
 - Inspection for missing view templates
@@ -104,7 +84,7 @@ Use plugin settings window to set up table prefix
 ## Inspections
 Inspections can be disabled inline `/** @noinspection MissedViewInspection */`.
 
-### Views
+### Views  (Currently not Working)
 - `MissedViewInspection`  
 Reports missing view templates
 - `RequireParameterInspection`  
@@ -130,22 +110,18 @@ Check if ActiveQuery correctly linked to ActiveRecord
 
 Installation
 ------------
-- Open your PhpStorm or IntelliJ IDEA IDE.
-- Go to `File` → `Settings`.
-- Choose `Plugins`.
-- Press `Browse repositories...` button.
-- Type `yii2 support`.
-- Press `Install` green button on the very top of description.
+- Download the .zip from Releases
+- In PHPStorm go to Settings -> Plugins
+- Click the three Dots next to "Installed" at the top
+- Press "Install Plugin from Disk"
+- Choose the Downloaded .zip File
+- Click Apply
 
 Contributing
 ------------
-The plugin is [Open Source](LICENSE.md). You may contribute either by testing and [reporting issues](https://github.com/nvlad/yii2support/issues)
-or by sending pull requests. 
+The plugin is [Open Source](LICENSE.md). You may contribute either by testing and or by sending pull requests. 
 
 ### Spreading the Word
 Acknowledging and or citing the plugin is as important as direct contributions.
-
-If you are giving a presentation or talk we suggest using
-[our logo](https://github.com/nvlad/yii2support/raw/master/img/logo.png?raw=true).
 
 [Project Changelog](CHANGELOG.md)
