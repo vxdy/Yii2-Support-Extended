@@ -8,7 +8,7 @@ Fork of https://github.com/nvlad/yii2support
 Features
 --------
 
-### Views  (Currently not Working)
+### Views
 - View template names and parameters completion
 - Add view parameters after completion
 - Inspection for missing view templates
@@ -84,7 +84,7 @@ Use plugin settings window to set up table prefix
 ## Inspections
 Inspections can be disabled inline `/** @noinspection MissedViewInspection */`.
 
-### Views  (Currently not Working)
+### Views
 - `MissedViewInspection`  
 Reports missing view templates
 - `RequireParameterInspection`  
