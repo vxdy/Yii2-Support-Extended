@@ -71,7 +71,9 @@ public class ClassUtils {
 
     @Nullable
     public static PhpClass getClass(PhpIndex phpIndex, String className) {
-        Collection<PhpClass> classes = phpIndex.getAnyByFQN(className);
+        String sanitizedClassName = className.split("\\|")[0];
+
+        Collection<PhpClass> classes = phpIndex.getAnyByFQN(sanitizedClassName);
 
         return classes.isEmpty() ? null : classes.iterator().next();
     }
@@ -132,6 +134,7 @@ public class ClassUtils {
 
                 if (index1 >= 0 && index2 >= 0 && index2 > index1) {
                     String className = strType.substring(index1, index2);
+
                     return ClassUtils.getClass(PhpIndex.getInstance(methodRef.getProject()), className);
                 } else {
                     return null;
