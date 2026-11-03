@@ -4,6 +4,7 @@ import com.intellij.core.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocProperty;
 import com.jetbrains.php.config.PhpProjectSharedConfiguration;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.parser.PhpParserDefinition;
@@ -63,7 +64,7 @@ public final class PhpPsiRegressionTest {
             project.registerService(PhpProjectSharedConfiguration.class,new PhpProjectSharedConfiguration());
             project.registerService(com.intellij.pom.tree.TreeAspect.class,new com.intellij.pom.tree.TreeAspect());
             project.registerService(com.intellij.pom.PomModel.class,new com.intellij.pom.core.impl.PomModelImpl(project));
-            arguments(); modelsAndRelations(); contexts(); references(); arrayMode(); widgets(); widgetCallbacks(); incomplete();
+            arguments(); modelsAndRelations(); contexts(); references(); arrayMode(); widgets(); widgetCallbacks(); queryAliases(); incomplete();
             System.out.println("PASS: "+checks+" real PHP PSI regression checks");
         } finally { Disposer.dispose(disposable); }
     }
@@ -400,11 +401,76 @@ public final class PhpPsiRegressionTest {
         file=php("namespace gridtest; Grid::widget(['dataProvider'=>new Provider(['query'=>User::find()]),'columns'=>[['contentOptions'=>['value'=>fn($row)=>$row]]]]);");
         eq("nested unrelated value callback excluded",null,callbackType(file,"row"));
     }
+    private static Map<String,List<String>> aliasNames(PsiFile file, String column) {
+        var call = QueryAliases.columnCall(literal(file,column));
+        if (call == null) return null;
+        Map<String,List<String>> result = new TreeMap<>();
+        new QueryAliases(resolver).visible(call).forEach((k,v) -> result.put(k, v.stream().map(PhpClass::getName).sorted().toList()));
+        return result;
+    }
+    private static void queryAliases() {
+        php("""
+            namespace shop;
+            use yii\\db\\ActiveRecord;
+            /** @property int $id\n * @property string $name */
+            class Region extends ActiveRecord {}
+            /** @property int $id\n * @property int $region_id\n * @property-read Region $region */
+            class City extends ActiveRecord {
+                public function getRegion() { return $this->hasOne(Region::class, ['id' => 'region_id']); }
+            }
+            /** @property int $id\n * @property int $city_id */
+            class AddressBase extends ActiveRecord {}
+            /** @property string $street */
+            class Address extends AddressBase {
+                public function getCity() { return $this->hasOne(City::class, ['id' => 'city_id']); }
+                public function getOtherCity() { return $this->hasOne(City::class, ['id' => 'other_id']); }
+                public function getInfo() { return 'virtual'; }
+            }
+            """);
+        eq("joinWith spec", List.of("city.region","r"), Arrays.asList(QueryAliases.spec("city.region r")));
+        eq("joinWith AS spec", List.of("city","c"), Arrays.asList(QueryAliases.spec("city AS c")));
+        eq("joinWith without alias", Arrays.asList("city", null), Arrays.asList(QueryAliases.spec("city")));
+        eq("SQL expression is not a spec", null, QueryAliases.spec("city c, x"));
+        var file = php("namespace shop; Address::find()->alias('a')->joinWith(['city c', 'city.region AS r'])->andWhere(['c.id' => 1, 'a.street' => 'x']);");
+        eq("main, joined and nested aliases", Map.of("a",List.of("Address"),"c",List.of("City"),"r",List.of("Region")), aliasNames(file,"c.id"));
+        eq("hash value is not a condition column", null, aliasNames(file,"x"));
+        file = php("namespace shop; Address::find()->where('c.') ->joinWith('city c');");
+        eq("joins after the condition still apply", Map.of("c",List.of("City")), aliasNames(file,"c."));
+        file = php("namespace shop; Address::find()->joinWith(['city' => function ($q) { $q->alias('town')->andWhere(['town.id' => 1, 'a.id' => 2]); }])->alias('a')->select(['street' => 'town.name']);");
+        eq("callback alias names the joined table", Map.of("a",List.of("Address"),"town",List.of("City")), aliasNames(file,"town.name"));
+        eq("callback sees its own and outer aliases", Map.of("a",List.of("Address"),"town",List.of("City")), aliasNames(file,"town.id"));
+        eq("select key is a result name", null, aliasNames(file,"street"));
+        file = php("namespace shop; $q = Address::find()->joinWith('city c'); $q->andWhere(['=', 'c.region_id', 'value']);");
+        eq("local query variable and operator column", Map.of("c",List.of("City")), aliasNames(file,"c.region_id"));
+        eq("operator value is not a column", null, aliasNames(file,"value"));
+        file = php("namespace shop; Address::find()->joinWith('city c')->where(['and', ['c.id' => 1], ['like', 'c.region_id', 'x']])->orderBy(['c.id' => SORT_ASC])->groupBy(['c.region_id']);");
+        eq("logical operand hash key", Map.of("c",List.of("City")), aliasNames(file,"c.id"));
+        eq("logical operand operator column", Map.of("c",List.of("City")), aliasNames(file,"c.region_id"));
+        file = php("namespace shop; Address::find()->joinWith(['city x', 'otherCity x'])->where('x.id');");
+        eq("same alias for one model is kept", Map.of("x",List.of("City")), aliasNames(file,"x.id"));
+        file = php("namespace shop; Address::find()->alias('x')->joinWith('city x')->where('x.id');");
+        eq("conflicting alias is dropped", Map.of(), aliasNames(file,"x.id"));
+        file = php("namespace shop; Address::find()->alias($name)->joinWith('city c')->where('c.id');");
+        eq("dynamic alias stops analysis", Map.of(), aliasNames(file,"c.id"));
+        file = php("namespace shop; Address::find()->customScope()->joinWith('city c')->where('c.id');");
+        eq("unknown query method stops analysis", Map.of(), aliasNames(file,"c.id"));
+        file = php("namespace shop; Address::find()->joinWith('missing m')->where('m.id');");
+        eq("unknown relation adds no alias", Map.of(), aliasNames(file,"m.id"));
+        file = php("namespace shop; Address::find()->joinWith('city c')->where(['in', 'id', (new \\yii\\db\\Query())->select('c.inner')->from('t')]);");
+        eq("subquery does not inherit outer aliases", Map.of(), aliasNames(file,"c.inner"));
+        file = php("namespace shop; Address::find()->joinWith('city c')->limit('c.id');");
+        eq("non-column method", null, aliasNames(file,"c.id"));
+        var attributes = new QueryAliases(resolver).attributes(classes.get("\\shop\\City")).stream().map(PhpDocProperty::getName).sorted().toList();
+        eq("relation property is not a column", List.of("id","region_id"), attributes);
+        attributes = new QueryAliases(resolver).attributes(classes.get("\\shop\\Address")).stream().map(PhpDocProperty::getName).sorted().toList();
+        eq("inherited documented columns", List.of("city_id","id","street"), attributes);
+    }
     private static void incomplete() {
-        for (String code:List.of("$x->with('","$x->with(['orders' =>", "$this->hasMany(", "$this->render(params:","$x->joinWith(['orders.","$a=$a; $a->with('x');", "\\yii\\grid\\GridView::widget(['columns'=>[['attribute'=>'", "\\yii\\widgets\\DetailView::widget(['model'=>new", "\\yii\\grid\\GridView::widget(['columns'=>[['value'=>fn($row)=>")) {
+        for (String code:List.of("$x->with('","$x->with(['orders' =>", "$this->hasMany(", "$this->render(params:","$x->joinWith(['orders.", "User::find()->joinWith(['orders' => function($q) { $q->alias(", "User::find()->where(['and', ['","$a=$a; $a->with('x');", "\\yii\\grid\\GridView::widget(['columns'=>[['attribute'=>'", "\\yii\\widgets\\DetailView::widget(['model'=>new", "\\yii\\grid\\GridView::widget(['columns'=>[['value'=>fn($row)=>")) {
             var file=php(code);
             for (var str:PsiTreeUtil.findChildrenOfType(file,StringLiteralExpression.class)) {
                 RelationContext.of(str);
+                var columnCall = QueryAliases.columnCall(str); if (columnCall != null) new QueryAliases(resolver).visible(columnCall);
                 widgets.models(WidgetContext.of(str));
             }
             for (var param:PsiTreeUtil.findChildrenOfType(file,Parameter.class)) WidgetCallbackTypeProvider.infer(param,widgets);
