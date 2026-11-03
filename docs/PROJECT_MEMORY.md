@@ -17,14 +17,14 @@ Superseded RC history lives in `docs/verification/` and Git history, not here.
 
 ## Current repository state
 
-- `master` = `b366c26`: PR #1 merged the complete 1.0.0 integration (identity, relations,
-  PHPDoc fixes, GridView/DetailView, repository workflow). PR #2 was merged into it earlier.
-- Version `1.0.0` is set, but no `v1.0.0` tag, GitHub Release or Marketplace listing exists.
-  Only legacy upstream tags `0.0.1` and `0.12.0` are present.
-- `docs/verification/release-1.0.0.md` records the 1.0.0 Docker/verifier evidence for the tree
-  at that time (146 core / 165 PSI). The current branch changes sources, so release evidence
-  must be regenerated before tagging. Stable publication requires exact-ZIP runtime evidence
-  under RELEASING.md; never invent it.
+- `master` = `0d5fed9`: PR #1 (1.0.0 integration), PR #3 (each/batch types, audit fixes,
+  docs cleanup) and PR #4 (version `1.0.0-rc.7`) are merged.
+- Published pre-release `v1.0.0-rc.7` (2026-11-03): https://github.com/byscrimm/phpstorm-yii2-support/releases/tag/v1.0.0-rc.7
+  ZIP SHA-256 `2ab7a61af10e7de1ef4db95bc8bb2edd7a56e436c7a43d0d92e7418ceb398b03`; Docker suites
+  (155 core / 170 PSI) and official Plugin Verifier passed in the release run; checksum and
+  provenance attestation verified locally; full IDE runtime scenarios `not_run`.
+- Stable `1.0.0` is blocked by tooling until `docs/verification/runtime-1.0.0.json` records a
+  complete isolated-IDE run of the exact stable ZIP (RELEASING.md). Never invent it.
 - Remote settings (2026-09-08): squash-only merges, protected `master` requiring PRs and both
   checks (`checks / Repository policy`, `checks / Build and verify`), immutable `v*` tags,
   read-only Actions token, SHA-pinned actions, Dependabot, private vulnerability reporting.
@@ -92,7 +92,7 @@ Production Java is under `src/io/github/byscrimm/yii2insight/`; extension regist
 - Core test environment needs `TreeAspect` before `PomModelImpl`, parser registry defaults
   from the SDK, and smart-pointer initialization while the app is alive.
 
-## Last verified state (branch `chore/claude-and-batch-types`, uncommitted)
+## Last verified state (merged in PR #3, released as 1.0.0-rc.7)
 
 - Changes: Claude Code tooling (`CLAUDE.md` imports `AGENTS.md`); `each()`/`batch()` result
   types; view index UTF-8 (index version 34); Yii root boundary; view rename smart pointers;
@@ -115,4 +115,5 @@ Production Java is under `src/io/github/byscrimm/yii2insight/`; extension regist
   automated.
 - Roadmap order: SQL aliases/attributes, asArray result keys, controller-to-view flow,
   config merging/DI, routes/i18n, indexing/performance. See `DEVELOPMENT_PLAN.md`.
-- Before 1.0.0 tag: merge this branch, rerun Docker/verifier and exact-ZIP runtime scenarios.
+- Next for stable 1.0.0: set version 1.0.0 on a release branch, test that exact CI ZIP in the
+  isolated IDE (fixtures in build/ide-runtime-claude/project/scenarios), add runtime evidence, tag.
