@@ -52,9 +52,10 @@ public class YiiTypeProvider implements PhpTypeProvider4 {
             }
         }else if(psiElement instanceof FieldReference) {
             String fieldName = PsiUtil.getYiiAppField((FieldReference) psiElement);
-            if (fieldName != null && psiElement.getContainingFile() != null
-                    && io.github.byscrimm.yii2insight.common.FileUtil.getVirtualFile(psiElement.getContainingFile()) != null) {
-                return new PhpType().add("#" + this.getKey() + TRIM_KEY2 + fieldName + TRIM_KEY2 + java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(io.github.byscrimm.yii2insight.common.FileUtil.getVirtualFile(psiElement.getContainingFile()).getUrl().getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+            var file = fieldName == null || psiElement.getContainingFile() == null ? null
+                    : io.github.byscrimm.yii2insight.common.FileUtil.getVirtualFile(psiElement.getContainingFile());
+            if (file != null) {
+                return new PhpType().add("#" + this.getKey() + TRIM_KEY2 + fieldName + TRIM_KEY2 + java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(file.getUrl().getBytes(java.nio.charset.StandardCharsets.UTF_8)));
             }
         }
         return null;
@@ -62,6 +63,9 @@ public class YiiTypeProvider implements PhpTypeProvider4 {
 
     @Override
     public @Nullable PhpType complete(String s, Project project) {
+        if (com.intellij.openapi.project.DumbService.isDumb(project)) {
+            return null;
+        }
         PhpType phpType = new PhpType();
 
         int trimIndex = s.indexOf(TRIM_KEY);

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4;
 import io.github.byscrimm.yii2insight.common.ClassUtils;
+import io.github.byscrimm.yii2insight.common.QueryResultTypes;
 import io.github.byscrimm.yii2insight.common.SignatureUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public class ActiveRecordTypeProvider  implements PhpTypeProvider4  {
             String methodName = methodReference.getName();
             if (methodName == null)
                 return null;
-            if (methodName.equals("one") || methodName.equals("all")) {
+            if (QueryResultTypes.isResultMethod(methodName)) {
                 if (usesArrayResult(methodReference)) return null;
                 String signature = methodReference.getSignature();
                 int beginIndex = signature.indexOf("\\");
@@ -74,10 +75,8 @@ public class ActiveRecordTypeProvider  implements PhpTypeProvider4  {
         PhpClass classBySignature = SignatureUtils.getClassBySignature(s, project);
         boolean classInheritsFromAD = ClassUtils.isClassInherit(classBySignature, "\\yii\\db\\BaseActiveRecord", PhpIndex.getInstance(project));
         if (classInheritsFromAD) {
-            if (s.endsWith(".one"))
-                phpType.add(classBySignature.getFQN()).add("null");
-            else if (s.endsWith(".all")) {
-                phpType.add(classBySignature.getFQN()+ "[]");
+            for (String type : QueryResultTypes.types(classBySignature.getFQN(), s)) {
+                phpType.add(type);
             }
         }
         return phpType;

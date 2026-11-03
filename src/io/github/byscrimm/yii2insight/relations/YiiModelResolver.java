@@ -36,6 +36,7 @@ public final class YiiModelResolver {
     private List<PhpClass> models(PsiElement expression, Set<PsiElement> seen, int depth) {
         if (expression == null || depth > 24 || !seen.add(expression)) return List.of();
         ProgressManager.checkCanceled();
+        if (expression instanceof ParenthesizedExpression parenthesized) return models(parenthesized.getArgument(), seen, depth+1);
         if (expression instanceof Variable variable) {
             if ("this".equals(variable.getName())) {
                 PhpClass owner = PsiTreeUtil.getParentOfType(variable, PhpClass.class);

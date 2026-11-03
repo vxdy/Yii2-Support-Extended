@@ -1,12 +1,14 @@
 # Yii2 Insight
 
+![Yii2 Insight](img/yii2-insight-github.png)
+
 [English](README.md) | Русский
 
 **Поддержка Yii2 в PhpStorm: автодополнение, навигация, рефакторинг связей и помощь с PHPDoc.**
 
-Версия **1.0.0**, сопровождающий — **by_scrimm**. Требуется **PhpStorm 2026.2.2**, сборка **262.10315.130**, или более новая версия в ветке **2026.2.x**. Java 25 поставляется с поддерживаемой IDE. Более ранние версии PhpStorm этой сборкой не поддерживаются.
+Сопровождающий — **by_scrimm**. Требуется **PhpStorm 2026.2.2**, сборка **262.10315.130**, или более новая версия в ветке **2026.2.x**. Java 25 поставляется с поддерживаемой IDE. Более ранние версии PhpStorm этой сборкой не поддерживаются.
 
-Это независимый форк [Yii2 Support Extended от Vxdy](https://github.com/vxdy/Yii2-Support-Extended), основанного на [Yii2 Support от NVlad](https://github.com/nvlad/yii2support). Лицензия BSD и авторство исходного кода сохранены. Все изменения нашего форка разрабатываются с помощью AI; пользователю плагина не нужны AI-аккаунт, API-ключ или внешний AI-сервис.
+Это независимый форк [Yii2 Support Extended от Vxdy](https://github.com/vxdy/Yii2-Support-Extended), основанного на [Yii2 Support от NVlad](https://github.com/nvlad/yii2support). Лицензия BSD и авторство исходного кода сохранены. Доработки форка — by_scrimm, разработка ведётся с помощью AI (Claude Code). Самому плагину не нужны AI-аккаунт, API-ключ или сетевые сервисы.
 
 ## Возможности
 
@@ -16,7 +18,7 @@
 | Навигация и Find Usages | Переход от сегмента связи к getter; поиск строковых использований от getter/PHPDoc; PHPDoc-свойство в результатах поиска getter |
 | Переименование связей | Из объявления getter или PHPDoc: согласованное изменение метода, локального свойства и найденных использований с Preview; суффиксы пути, алиасы и посторонние колонки сохраняются. Rename из строки запрещён |
 | PHPDoc связей | Подсветка PHPDoc/имени класса и getter, добавление одной или всех недостающих локальных связей через Alt+Enter; property-read без публичного setter, nullable-тип для hasOne, массив для hasMany |
-| Типы запросов | Модель в поддерживаемых цепочках ActiveRecord/ActiveQuery, локальных значениях, one/all; учёт asArray и последнего asArray(false) |
+| Типы запросов | Модель в поддерживаемых цепочках ActiveRecord/ActiveQuery, локальных значениях, one/all, foreach по each()/batch(); учёт asArray и последнего asArray(false) |
 | GridView / DetailView | Атрибуты и вложенные связи, attribute:format:label; модель из провайдера; тип первого параметра value-callback; разделение filterModel и модели строки |
 | Views | Имена и параметры шаблонов, переходы к view/render, инспекции отсутствующих шаблонов и обязательных/неиспользуемых параметров, связанные исправления и шаблоны файлов |
 | Конфигурация | Свойства в поддерживаемых конфигурационных массивах, конструкторах, Yii::createObject, виджетах/ActiveField и компонентах приложения |
@@ -33,13 +35,29 @@
 
 Подробности: [карта происхождения функций](docs/FEATURES.md), [changelog](CHANGELOG.md), [авторы](AUTHORS.md). Унаследованные функции не выдаются за нашу новую разработку.
 
+## Примеры
+
+```php
+City::find()->with('region.cities');
+City::find()->joinWith(['region r']);
+
+GridView::widget([
+    'dataProvider' => new ActiveDataProvider(['query' => City::find()]),
+    'columns' => ['name:text:City', 'region.name',
+        ['value' => fn($model) => $model->name]],
+]);
+```
+
+`region` ведёт к `City::getRegion()`. Rename запускайте на `getRegion()` или его PHPDoc-свойстве — найденные ссылки обновятся; Rename из строки связи намеренно отключён. Недостающий PHPDoc связей добавляется через **Alt+Enter** без замены существующих комментариев и посторонних свойств.
+
 ## Установка и настройка
 
-1. Скачайте `yii2-insight-1.0.0.zip` из [GitHub Releases](https://github.com/byscrimm/phpstorm-yii2-support/releases). ZIP исходников из Code → Download ZIP не подходит для установки.
+1. Скачайте `yii2-insight-<version>.zip` из [GitHub Releases](https://github.com/byscrimm/phpstorm-yii2-support/releases). ZIP исходников из Code → Download ZIP не подходит для установки. Пока первый релиз не опубликован, соберите ZIP сами (см. «Сборка»).
 2. Settings → Plugins → ⚙ → Install Plugin from Disk → выберите ZIP → перезапустите IDE.
-3. Откройте Settings → PHP → Yii2 Insight: настройте корень Yii, параметры views, datasource и команды миграций при необходимости.
+3. Отключите другие Yii2 Support-плагины.
+4. Откройте Settings → PHP → Yii2 Insight: настройте корень Yii, параметры views, datasource и команды миграций при необходимости.
 
-ID плагина — `io.github.byscrimm.yii2insight`, настройки — `yii2-insight.xml`. Конфликтующие Yii2 Support-плагины нельзя включать одновременно. Старые настройки, инспекции и сочетания клавиш автоматически не переносятся. Публикация на Marketplace требует отдельной загрузки и одобрения JetBrains.
+ID плагина — `io.github.byscrimm.yii2insight`, настройки — `yii2-insight.xml`. Старые настройки, инспекции и сочетания клавиш автоматически не переносятся.
 
 ## Надёжность и ограничения
 
@@ -56,6 +74,6 @@ ID плагина — `io.github.byscrimm.yii2insight`, настройки — `
 Docker: `make docker`. С проверкой Plugin Verifier: `make docker GRADLE_ARGS=verifyPlugin`.
 Через установленный SDK: `python3 tools/build-offline.py --test --psi-test`, затем `python3 tools/verify-offline.py`.
 
-[Подробные инструкции сборки](README.md#build-with-docker) · [технические результаты](docs/verification/release-1.0.0.md) · [правила участия](CONTRIBUTING.md) · [правила выпуска](docs/RELEASING.md).
+[Подробные инструкции сборки](CONTRIBUTING.md) · [технические результаты](docs/verification/release-1.0.0.md) · [правила участия](CONTRIBUTING.md) · [правила выпуска](docs/RELEASING.md).
 
 Сохранены [BSD-лицензия](LICENSE.md), [авторы](AUTHORS.md) и [история upstream](docs/UPSTREAM_CHANGELOG.md). Yii2 Insight — общественный проект, не официальный продукт Yii или JetBrains.

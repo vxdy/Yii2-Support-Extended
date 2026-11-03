@@ -60,7 +60,7 @@ public class ViewFileIndex extends FileBasedIndexExtension<String, ViewInfo> {
 
     @Override
     public int getVersion() {
-        return 33;
+        return 34;
     }
 
     @NotNull
@@ -142,7 +142,7 @@ public class ViewFileIndex extends FileBasedIndexExtension<String, ViewInfo> {
         }
 
         private void writeString(@NotNull DataOutput dataOutput, @NotNull String data) throws IOException {
-            byte[] bytes = data.getBytes();
+            byte[] bytes = data.getBytes(java.nio.charset.StandardCharsets.UTF_8);
             dataOutput.writeInt(bytes.length);
 
             if (bytes.length > 0) {
@@ -160,7 +160,7 @@ public class ViewFileIndex extends FileBasedIndexExtension<String, ViewInfo> {
             byte[] bytes = new byte[length];
             dataInput.readFully(bytes, 0, length);
 
-            return new String(bytes);
+            return new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
         }
     }
 

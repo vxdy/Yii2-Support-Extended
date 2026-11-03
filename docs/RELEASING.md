@@ -7,8 +7,8 @@ No workflow currently uploads to Marketplace or modifies an installed IDE.
 
 ## Prepare a candidate
 
-1. Work on a descriptive branch; read GOVERNANCE.md. Set a new version, normally
-   `1.0.0` for the first stable release. Update the exact CHANGELOG.md section.
+1. Work on a descriptive branch; read GOVERNANCE.md. Set the version in
+   `gradle.properties` (currently `1.0.0`) and update the exact CHANGELOG.md section.
 2. Run `python3 tools/check_repository.py`, the tooling tests, workflow validation,
    Docker suites and official Plugin Verifier. Submit a PR describing changes and
    actual results. Resolve findings instead of suppressing release checks.
@@ -68,9 +68,9 @@ review any manually attached local logs and never upload customer-project logs.
 
 ## Marketplace readiness
 
-Before adding a publication workflow: choose a unique name/plugin ID/vendor,
-audit conflicting action/index/settings IDs, define migration/coexistence behavior,
-review bundled third-party resources, and complete compatibility/runtime checks.
+Name, plugin ID, vendor, ID namespacing and coexistence rules are settled (IDENTITY.md).
+Remaining before a publication workflow: bundled-asset review (ASSET_AUDIT.md),
+screenshots and exact-ZIP compatibility/runtime checks.
 Preserve LICENSE.md, NOTICE.md and AUTHORS.md. Provide genuine support contacts,
 source links, screenshots from test projects and an accurate feature description.
 See https://plugins.jetbrains.com/docs/marketplace/jetbrains-marketplace-approval-guidelines.html.

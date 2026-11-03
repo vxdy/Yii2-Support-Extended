@@ -127,6 +127,12 @@ public final class PhpPsiRegressionTest {
         eq("cyclic local variables terminate",List.of(),modelNames(call(file,"with").getClassReference()));
         file=php("namespace app; $query=User::find(); $query=$query->where([]); $query->with('orders');");
         eq("self assignment preserves previous query",List.of("User"),modelNames(call(file,"with").getClassReference()));
+        file=php("namespace app; (new User())->getRelation('orders');");
+        eq("parenthesized new record",List.of("User"),modelNames(call(file,"getRelation").getClassReference()));
+        file=php("namespace app; (User::find())->with('orders');");
+        eq("parenthesized query chain",List.of("User"),modelNames(call(file,"with").getClassReference()));
+        file=php("namespace app; (new Other())->getRelation('orders');");
+        eq("parenthesized non-record",List.of(),modelNames(call(file,"getRelation").getClassReference()));
     }
     private static void contexts() {
         var file=php("namespace app; User::find()->joinWith(['orders o' => function($q) { $q->where(['status'=>'active']); }], false, 'LEFT JOIN');");
@@ -248,6 +254,10 @@ public final class PhpPsiRegressionTest {
         for (String chain : List.of("asArray()", "asArray(true)", "asArray(value: true)", "asArray($flag)", "asArray(false)->asArray()")) {
             var file=php("namespace app; User::find()->"+chain+"->one();");
             eq("array result stays with native provider: "+chain,null,provider.getType(call(file,"one")));
+        }
+        for (String method : List.of("each", "batch")) {
+            var rows=php("namespace app; User::find()->asArray()->"+method+"(100);");
+            eq("array rows stay with native provider: "+method,null,provider.getType(call(rows,method)));
         }
         var file=php("namespace app; User::find()->asArray()->asArray(value: false)->one();");
         eq("last asArray(false) restores object mode",false,io.github.byscrimm.yii2insight.typeprovider.ActiveRecordTypeProvider.usesArrayResult(call(file,"one")));

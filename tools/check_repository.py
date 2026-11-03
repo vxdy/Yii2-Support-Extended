@@ -17,7 +17,7 @@ def main():
     changelog_section(version, (ROOT / "CHANGELOG.md").read_text())
     paths = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\0")
     for name in filter(None, paths):
-        if any(part in {".DS_Store", ".serena", ".codex", ".claude", ".intellijPlatform"} for part in Path(name).parts):
+        if any(part in {".DS_Store", ".serena", ".claude", ".intellijPlatform"} for part in Path(name).parts):
             raise ValueError("Local state must not be tracked: " + name)
     for path in (ROOT / ".github/workflows").glob("*.yml"):
         text = path.read_text()

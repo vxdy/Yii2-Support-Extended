@@ -14,6 +14,15 @@ public final class CoreRegressionTest {
     public static void main(String[] args) {
         Map<String,String> aliases = Map.of("@app", "backend", "@webroot", "@app/web", "@app/runtime", "/tmp/runtime");
         equal("backend", AliasResolver.resolve(aliases, "@app"));
+        equal(List.of("\\app\\User", "null"), QueryResultTypes.types("\\app\\User", "#\u0856\\app\\User.find.one"));
+        equal(List.of("\\app\\User[]"), QueryResultTypes.types("\\app\\User", "\\app\\User.find.all"));
+        equal(List.of("\\yii\\db\\BatchQueryResult", "\\app\\User[]"), QueryResultTypes.types("\\app\\User", "\\app\\User.find.where.each"));
+        equal(List.of("\\yii\\db\\BatchQueryResult", "\\app\\User[][]"), QueryResultTypes.types("\\app\\User", "\\app\\User.find.batch"));
+        equal(List.of(), QueryResultTypes.types("\\app\\User", "\\app\\User.find.count"));
+        equal(List.of(), QueryResultTypes.types(null, "\\app\\User.find.each"));
+        equal(true, QueryResultTypes.isResultMethod("batch"));
+        equal(false, QueryResultTypes.isResultMethod("eachRow"));
+        equal(false, QueryResultTypes.isResultMethod(null));
         equal("backend/models/User.php", AliasResolver.resolve(aliases, "@app/models/User.php"));
         equal("backend/web/css/app.css", AliasResolver.resolve(aliases, "@webroot/css/app.css"));
         equal("/tmp/runtime/logs", AliasResolver.resolve(aliases, "@app/runtime/logs"));

@@ -37,7 +37,7 @@ official Yii, JetBrains or upstream-author product.
 
 ## Change-level disclosure
 
-Use `AI-Assisted: OpenAI Codex` in new AI-assisted commit bodies and disclose AI work
+Use `AI-Assisted: Claude Code` in new AI-assisted commit bodies and disclose AI work
 in PR/release notes. Preserve real contributor identities and original Git history.
 Do not invent model versions, authors, co-author email addresses, independent review,
 passing tests or coverage. Distinguish an agent's self-review from a separate review.

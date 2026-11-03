@@ -12,6 +12,7 @@ Date: 2026-09-09. Compared against upstream commit
 The original BSD license and author notices are preserved in the distribution.
 The plugin icon uses inherited Yii framework artwork; repository provenance does
 not establish separate trademark permission. Confirm permission before Marketplace
-submission or replace it with an original mark. Local untracked img/ branding
-variants are not packaged or included in this release change. No marketplace
+submission or replace it with an original mark. The img/ branding variants
+(see img/BRANDING.md) are repository/README assets derived from the same mark and are
+not packaged in the plugin ZIP. No marketplace
 approval or independent legal review is claimed.

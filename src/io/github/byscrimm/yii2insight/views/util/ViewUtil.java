@@ -40,7 +40,7 @@ public class ViewUtil {
 
         int projectBaseDirLength = projectPath.length();
         final String absolutePath = virtualFile.getPath();
-        if (!absolutePath.startsWith(projectPath)) {
+        if (!absolutePath.startsWith(projectPath.endsWith("/") ? projectPath : projectPath + "/")) {
             return null;
         }
 

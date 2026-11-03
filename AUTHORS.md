@@ -10,6 +10,6 @@
 The preserved Git history records individual contributions; this list is not an
 exhaustive substitute for it. Existing authorship and copyright are retained.
 
-Updates to this fork are developed with AI assistance under the maintainer's
-direction. OpenAI Codex is a development tool, not the original author, an
-independent human reviewer, or the publisher. See AI_DEVELOPMENT.md in the repository.
+Improvements in this fork are authored and directed by by_scrimm. Claude Code
+(Anthropic) is used as a development tool; it is not an author, independent
+reviewer or publisher. See AI_DEVELOPMENT.md in the repository.

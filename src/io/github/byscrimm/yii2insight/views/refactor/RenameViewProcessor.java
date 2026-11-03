@@ -1,29 +1,31 @@
 package io.github.byscrimm.yii2insight.views.refactor;
 
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.refactoring.RefactoringSettings;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenamePsiFileProcessor;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.psi.PhpFile;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import io.github.byscrimm.yii2insight.utils.Yii2InsightSettings;
 import io.github.byscrimm.yii2insight.views.index.ViewFileIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by NVlad on 02.02.2017.
  */
 public class RenameViewProcessor extends RenamePsiFileProcessor {
-    private final Set<PsiElement> renders = new HashSet<>();
+    // Smart pointers avoid retaining PSI between prepareRenaming and the post-rename callback.
+    private final List<SmartPsiElementPointer<StringLiteralExpression>> renders = new ArrayList<>();
 
     @Override
     public boolean canProcessElement(@NotNull PsiElement psiElement) {
@@ -41,7 +43,7 @@ public class RenameViewProcessor extends RenamePsiFileProcessor {
         for (PsiReference reference : findReferences(psiElement)) {
             final PsiElement element = reference.getElement();
             if (element instanceof StringLiteralExpression) {
-                renders.add(element.getParent());
+                renders.add(SmartPointerManager.createPointer((StringLiteralExpression) element));
             }
         }
     }
@@ -52,17 +54,17 @@ public class RenameViewProcessor extends RenamePsiFileProcessor {
         return () -> {
             final Yii2InsightSettings settings = Yii2InsightSettings.getInstance(psiElement.getProject());
 
-            for (PsiElement render : renders) {
-                final StringLiteralExpression element = (StringLiteralExpression) ((ParameterList) render).getParameters()[0];
+            final List<SmartPsiElementPointer<StringLiteralExpression>> pointers = new ArrayList<>(renders);
+            renders.clear();
+            for (SmartPsiElementPointer<StringLiteralExpression> pointer : pointers) {
+                final StringLiteralExpression element = pointer.getElement();
+                if (element == null || !element.isValid()) {
+                    continue;
+                }
                 String fileName = element.getContents();
                 if (fileName.endsWith("." + settings.defaultViewExtension)) {
                     fileName = fileName.substring(0, fileName.length() - settings.defaultViewExtension.length() - 1);
-                }
-
-                fileName = element.isSingleQuote() ? "'" + fileName + "'" : "\"" + fileName + "\"";
-                final PsiElement newValue = PhpPsiElementFactory.createFromText(psiElement.getProject(), StringLiteralExpression.class, fileName);
-                if (newValue != null) {
-                    element.replace(newValue);
+                    ElementManipulators.handleContentChange(element, fileName);
                 }
             }
 

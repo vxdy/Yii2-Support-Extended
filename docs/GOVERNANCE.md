@@ -4,7 +4,7 @@ This is an independent BSD-licensed fork maintained by byscrimm with AI assistan
 The maintainer sets direction and authorizes publication. AI agents implement,
 self-review, test, document and prepare pull requests. Self-review must never be
 described as an independent human review. Preserve real Git authorship; use an
-`AI-Assisted: OpenAI Codex` commit trailer when applicable, without invented identities.
+`AI-Assisted: Claude Code` commit trailer when applicable, without invented identities.
 
 ## Branches and changes
 
@@ -63,10 +63,9 @@ notes are generated from the exact version section plus measured build evidence.
 
 ## Bootstrap state
 
-The existing `master` contains inherited/setup code whose full IDE behavior was not
-verified. It is a historical baseline, not evidence of a stable fork release.
-This governance change and previous local increments are being prepared together
-on `build/repository-workflow`; they must not be represented as already merged.
+The governance workflow and earlier local increments were merged into `master`
+through PR #1 (squash commit `b366c26`). Merging is not a release: no `v1.0.0` tag
+or GitHub Release exists until RELEASING.md is completed.
 Local version 1.1.0 was built but never publicly released. The repository candidate
 was 1.1.0-rc.3. The independent identity build was initially numbered 2.0.0-rc.1
 but was never published. On 2026-09-09 the maintainer chose a separate public

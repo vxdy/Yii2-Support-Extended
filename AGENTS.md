@@ -5,21 +5,23 @@
 - Follow the current user request. Start changes only after a direct action request or explicit confirmation. Questions, discussion and requests for an opinion do not authorize edits.
 - Read `docs/PROJECT_MEMORY.md` for the latest handoff, `DEVELOPMENT_PLAN.md` for scope,
   and the relevant source before implementation. Memory is context, not proof.
-- This is a Java plugin for JetBrains IDEs, not a PHP application or a Codex plugin.
+- This is a Java plugin for JetBrains IDEs, not a PHP application or a Claude Code plugin.
 - `origin` is `git@github.com:byscrimm/phpstorm-yii2-support.git`;
   `upstream` is `https://github.com/vxdy/Yii2-Support-Extended.git`.
   The default branch is `master`; use meaningful branches such as `feature/view-parameters`, `fix/relation-navigation`
-  or `build/docker-packaging`; never use the `codex/` prefix.
+  or `build/docker-packaging`; never use agent-named prefixes such as `claude/`.
 - The maintainer delegates implementation and repository maintenance to the AI agent.
   Use semantic versions; RCs are appropriate while release validation is pending.
   Follow docs/GOVERNANCE.md and docs/RELEASING.md for branches, commits, PRs and releases.
   master is the stable line; no direct pushes or automatic merges into it.
-  Include an AI-Assisted trailer on new AI-assisted commits, preserving real authorship.
+  Include an `AI-Assisted: Claude Code` trailer on new AI-assisted commits, preserving real
+  authorship; it replaces any tool-suggested `Co-Authored-By` line.
 - Preserve existing user changes and upstream history. Do not force-push or publish
   releases unless the current task authorizes it. Routine local edits and checks
   within an authorized task do not need repeated confirmation.
 - Communicate with the maintainer in Russian. Keep code identifiers and shared
-  technical documentation in English. Summarize outcome, verification and limits.
+  technical documentation in English (exceptions: `README.ru.md` and the maintainer's
+  Russian `DEVELOPMENT_PLAN.md`). Summarize outcome, verification and limits.
 
 ## Efficient work
 
@@ -122,5 +124,4 @@ Never describe these checks as full IDE validation.
   evidence tied to the exact ZIP hash. Never fabricate metrics, review or scenario results. Never overwrite a published version with
   different bytes or describe a prepared workflow as successfully executed.
 
-`AGENTS.md` is the canonical agent entry point. Discovery behavior is documented in
-[OpenAI Docs](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+`AGENTS.md` is the canonical agent entry point; `CLAUDE.md` imports it for Claude Code.

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- `foreach` over `ActiveQuery::each()` yields the model and over `batch()` yields model arrays; array mode is left to the native provider.
+- View index stores strings as UTF-8 (index version 34); view paths outside the Yii root no longer match by prefix.
+- View-file rename keeps references as smart pointers and edits them through PSI manipulators.
+- `Yii::$app` component types are not resolved during indexing (dumb mode).
+- Relation completion and navigation resolve the model through parentheses, e.g. `(new City())->getRelation('')`.
+
 ## 1.0.0
 
 First stable version of **Yii2 Insight**, an independent community fork maintained by **by_scrimm**. Requires PhpStorm **2026.2.2** (build 262.10315.130) or later within the 2026.2 branch.
@@ -83,6 +91,8 @@ The sections below retain the earlier development numbering. They are not a publ
 - Add agent instructions, shared project memory, contributor/release guidance and pull request reporting.
 - Correct Renovate fork/default-branch configuration, remove inherited reviewer/automerge settings, and bound CI runtime/concurrency.
 - Preserve upstream changelog separately in [docs/UPSTREAM_CHANGELOG.md](docs/UPSTREAM_CHANGELOG.md).
+
+> Sections below (1.1.0-*) use the pre-rename local numbering. They were never published; see docs/IDENTITY.md.
 
 ## 1.1.0-rc.3
 

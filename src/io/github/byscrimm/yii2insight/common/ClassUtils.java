@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
  * Created by NVlad on 11.01.2017.
  */
 public class ClassUtils {
+    private static final Pattern CLASS_TYPE = Pattern.compile("\\\\[A-Za-z\\\\]+");
+
     public static int getParamIndex(Method method, String[] paramNames) {
         for (String name : paramNames) {
             final int index = getParamIndex(method, name);
@@ -357,6 +359,15 @@ public class ClassUtils {
 
 
     public static Collection<Field> getWritableClassFields(PhpClass phpClass) {
+        return getClassFields(phpClass, true);
+    }
+
+    public static Collection<Field> getClassFields(PhpClass phpClass) {
+        return getClassFields(phpClass, false);
+    }
+
+    @Nullable
+    private static Collection<Field> getClassFields(PhpClass phpClass, boolean writableOnly) {
         if (phpClass == null) {
             return null;
         }
@@ -364,46 +375,22 @@ public class ClassUtils {
         final HashSet<Field> result = new HashSet<>();
         final Collection<Field> fields = phpClass.getFields();
         for (Field field : fields) {
-            if (field.isConstant()) {
+            if (!isUsableField(field) || writableOnly && field instanceof PhpDocProperty &&
+                    isReadonlyProperty(phpClass, (PhpDocProperty) field)) {
                 continue;
             }
-
-            final PhpModifier modifier = field.getModifier();
-            if (!modifier.isPublic() || modifier.isStatic()) {
-                continue;
-            }
-
-            if (field instanceof PhpDocProperty && isReadonlyProperty(phpClass, (PhpDocProperty) field)) {
-                continue;
-            }
-
             result.add(field);
         }
 
         return result;
     }
 
-    public static Collection<Field> getClassFields(PhpClass phpClass) {
-        if (phpClass == null) {
-            return null;
+    private static boolean isUsableField(Field field) {
+        if (field.isConstant()) {
+            return false;
         }
-
-        final HashSet<Field> result = new HashSet<>();
-        final Collection<Field> fields = phpClass.getFields();
-        for (Field field : fields) {
-            if (field.isConstant()) {
-                continue;
-            }
-
-            final PhpModifier modifier = field.getModifier();
-            if (!modifier.isPublic() || modifier.isStatic()) {
-                continue;
-            }
-
-            result.add(field);
-        }
-
-        return result;
+        PhpModifier modifier = field.getModifier();
+        return modifier.isPublic() && !modifier.isStatic();
     }
 
     private static boolean isReadonlyProperty(PhpClass clazz, PhpDocProperty field) {
@@ -514,15 +501,12 @@ public class ClassUtils {
         String typeString = type.toString();
         String[] split = typeString.split("\\|");
         for (String classText: split) {
-            Pattern pattern = Pattern.compile("\\\\[A-Za-z\\\\]+");
-            Matcher matcher = pattern.matcher(classText);
+            Matcher matcher = CLASS_TYPE.matcher(classText);
             if (matcher.find()) {
                 classText = matcher.group();
             }
             Collection<PhpClass> anyByFQN = PhpIndex.getInstance(element.getProject()).getAnyByFQN(classText);
-            if (anyByFQN.isEmpty()) {
-
-            } else {
+            if (!anyByFQN.isEmpty()) {
                 return anyByFQN.iterator().next();
             }
         }

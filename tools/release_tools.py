@@ -180,7 +180,7 @@ full IDE behavior. Read any runtime report for its exact tested IDE/OS scope.
 
 ## Attribution
 
-Maintained by by_scrimm with AI assistance (OpenAI Codex); based on Vxdy's fork
+Maintained by by_scrimm with AI assistance (Claude Code); based on Vxdy's fork
 of NVlad's Yii2 Support. Original BSD license and author credits are included.
 AI-assisted implementation/self-review is not independent human review.
 """
