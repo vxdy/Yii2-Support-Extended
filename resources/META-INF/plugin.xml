@@ -19,7 +19,7 @@
 <p><a href="https://github.com/byscrimm/phpstorm-yii2-support">Source and documentation</a> · <a href="https://github.com/byscrimm/phpstorm-yii2-support/blob/master/LICENSE.md">License</a> · <a href="https://github.com/byscrimm/phpstorm-yii2-support/blob/master/CHANGELOG.md">Changelog</a></p>
     ]]></description>
 
-    <change-notes><![CDATA[<b>1.0.0 — first stable Yii2 Insight release</b><br/>Independent Yii2 support for PhpStorm 2026.2.2: relation completion/navigation/refactoring, class PHPDoc actions, improved GridView/DetailView inference, and retained view/config/form/database/route/translation/migration functionality. Main workflows were manually exercised during candidate testing; bugs may remain. Please report issues on GitHub.]]></change-notes>
+    <change-notes><![CDATA[<b>1.0.0-rc.7 — first public Yii2 Insight pre-release</b><br/>Adds model types for foreach over each()/batch(), parenthesized relation models and view-index fixes. Independent Yii2 support for PhpStorm 2026.2.2: relation completion/navigation/refactoring, class PHPDoc actions, improved GridView/DetailView inference, and retained view/config/form/database/route/translation/migration functionality. Main workflows were manually exercised during candidate testing; bugs may remain. Please report issues on GitHub.]]></change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

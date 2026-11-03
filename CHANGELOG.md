@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.0.0-rc.7
+
+First public pre-release of Yii2 Insight. It contains everything in the 1.0.0 section
+below plus the changes listed here. Full isolated-IDE runtime scenarios for this exact
+ZIP are still pending; the stable 1.0.0 release follows after they pass.
 
 - `foreach` over `ActiveQuery::each()` yields the model and over `batch()` yields model arrays; array mode is left to the native provider.
 - View index stores strings as UTF-8 (index version 34); view paths outside the Yii root no longer match by prefix.
